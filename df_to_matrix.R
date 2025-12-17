@@ -1,7 +1,4 @@
 ## Função df->matriz
-
-dados = read_csv("asoiaf-book1-edges.csv")
-
 df_to_matriz = function(data, source=1, target=2, weight=3, directed=FALSE, sort=TRUE, def.weight=0){
   #tratamento
   df = data[c(source, target, weight)]
@@ -25,6 +22,3 @@ df_to_matriz = function(data, source=1, target=2, weight=3, directed=FALSE, sort
   
   return(matriz)
 }
-
-m = df_to_matriz(dados)
-view(m)

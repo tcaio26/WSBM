@@ -1,0 +1,17 @@
+---
+title: "Passo a Passo"
+output: html_notebook
+---
+
+```{r dependencias e funções prontas}
+library(tidyverse)
+source("df_to_matrix.R")
+```
+
+```{r leitura de dados teste}
+dados = read_csv("asoiaf-book1-edges.csv")
+```
+
+```{r transformação em matriz caso os dados não venham - pronta}
+df_m = df_to_matriz(dados)
+```
