@@ -5,6 +5,7 @@ output: html_notebook
 
 ```{r dependencias e funções prontas}
 library(tidyverse)
+library(MASS)
 source("df_to_matrix.R")
 ```
 
