@@ -53,9 +53,9 @@ m.step = function(clusters, connections,m){
 ve.step = function(m.step, ve.past, connections, m){ #será a parte mais difícil de otimizar
   J = cm = matrix(numeric(n*Q),nrow=n)
   for(i in 1:n){
-    for(q in Q){
-      J[i,q] = log(m.step$probcluster_[q])+sum(dbinom(connections[,q],m,m.step$probconn_[q,ve.past$cl], log=T))
-    }
+    J[i,] = vapply(1:Q, 
+                   function(q) log(m.step$probcluster_[q])+sum(dbinom(connections[i,],m,m.step$probconn_[q,ve.past$cl], log=T)),
+                   FUN.VALUE = numeric(1))
   }
   cl = apply(J,1,which.max)
   for(j in 1:Q) cm[,j] = (cl==j)
