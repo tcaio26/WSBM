@@ -5,14 +5,24 @@ output: html_notebook
 
 ```{r dependencias e funções prontas}
 library(tidyverse)
-library(MASS)
 source("df_to_matrix.R")
 ```
 
 ```{r leitura de dados teste}
-dados = read_csv("asoiaf-book1-edges.csv")
+dados = read_csv("asoiaf-book1-edges.csv") #readr
 ```
 
 ```{r transformação em matriz caso os dados não venham - pronta}
 df_m = df_to_matriz(dados)
+```
+
+```{r parametros}
+Q = 3 #numero de grupos
+iter_max = 500
+
+```
+
+```{r inicialização}
+km = kmeans(df_m, Q)
+clusters.ini = km$cluster
 ```
