@@ -9,11 +9,14 @@ source("df_to_matrix.R")
 ```
 
 ```{r leitura de dados teste}
-dados = read_csv("asoiaf-book1-edges.csv") #readr
+#dados = read_csv("asoiaf-book1-edges.csv") #readr
+source("simulacoes.R")
+df_m = simulado_binom$conections
 ```
 
 ```{r transformação em matriz caso os dados não venham - pronta}
-df_m = df_to_matriz(dados)
+#df_m = df_to_matriz(dados) não necessário para a simulação
+n = nrow(df_m)
 ```
 
 ```{r parametros}
@@ -22,7 +25,52 @@ iter_max = 500
 
 ```
 
-```{r inicialização}
+```{r inicialização, message=F}
 km = kmeans(df_m, Q)
-clusters.ini = km$cluster
+clusters.ini.m = matrix(logical(Q*n), nrow = n)
+clusters.ini.l = km$cluster
+for(j in 1:Q) clusters.ini.m[,j] = (km$cluster==j)
+clusters.ini = list(cl = clusters.ini.l, cm = clusters.ini.m)
+```
+
+```{r binom}
+m = max(df_m)
+
+bn = function(x,n){
+  factorial(n)/(factorial(n-x)*factorial(x))
+}
+
+#M-step
+m.step = function(clusters, connections,m){
+  probcluster_ = apply(clusters, 2, sum)/nrow(clusters)
+  probconn_ = matrix(numeric(Q^2),nrow=Q)
+  for(q in 1:Q){
+    c = connections[clusters[,q],]
+    probconn_[q,] = apply(clusters, 2, function(x) mean(c[,x]))/m
+  }
+  return(list(probcluster_ = probcluster_, probconn_ = probconn_))
+}
+ve.step = function(m.step, ve.past, connections, m){ #será a parte mais difícil de otimizar
+  J = cm = matrix(numeric(n*Q),nrow=n)
+  for(i in 1:n){
+    for(q in Q){
+      J[i,q] = log(m.step$probcluster_[q])+sum(dbinom(connections[,q],m,m.step$probconn_[q,ve.past$cl], log=T))
+    }
+  }
+  cl = apply(J,1,which.max)
+  for(j in 1:Q) cm[,j] = (cl==j)
+  
+  return(list(cl = cl, cm = cm, lik = J))
+}
+```
+
+
+```{r testando 1 iter}
+m1 = m.step(clusters.ini$cm, df_m, m)
+m1
+```
+
+```{r testando ve step}
+v1 = ve.step(m1, clusters.ini, df_m, m)
+v1
 ```

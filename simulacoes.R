@@ -74,5 +74,5 @@ for(i in 1:n){
 
 simulado_gamma = list(labels = etiquetas, conections = pesos)
 
-
-rm(list = ls(all.names = T)[-(18:19)])
+remove(list = c("alphas", "betas", "conexoes", "pesos", "probs_conexão_cluster", "clusters_faltantes", "con",
+                "etiquetas", "i", "j", "max_weight", "n", "p", "probclusters", "ProbMinCluster", "Q"))
