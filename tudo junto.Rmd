@@ -45,8 +45,8 @@ m.step = function(clusters, connections,m){
   probcluster_ = apply(clusters, 2, sum)/nrow(clusters)
   probconn_ = matrix(numeric(Q^2),nrow=Q)
   for(q in 1:Q){
-    c = connections[clusters[,q],]
-    probconn_[q,] = apply(clusters, 2, function(x) mean(c[,x]))/m
+    c = connections[as.logical(clusters[,q]),     ,drop=FALSE]
+    probconn_[q,] = apply(clusters, 2, function(x) mean(c[,as.logical(x)]))/m
   }
   return(list(probcluster_ = probcluster_, probconn_ = probconn_))
 }
@@ -65,12 +65,28 @@ ve.step = function(m.step, ve.past, connections, m){ #será a parte mais difíci
 ```
 
 
+
 ```{r testando 1 iter}
 m1 = m.step(clusters.ini$cm, df_m, m)
 m1
 ```
 
 ```{r testando ve step}
-v1 = ve.step(m1, clusters.ini, df_m, m)
+v1 = ve.step(m1, clusters.ini, df_m, m) #funcionando? acho que sim
 v1
+```
+
+```{r iterando}
+#testando com 500, depois usar método epsilon. está convergendo em 3 passos p só um cluster, será que errei?
+ve_curr = clusters.ini
+for(i in 1:5){
+  print(table(ve_curr$cl))
+  
+  m_curr = m.step(ve_curr$cm, df_m, m)
+  ve_prev = ve_curr
+  ve_curr = ve.step(m_curr, ve_prev, df_m, m)
+  m_prev = m_curr
+  
+  print(m_curr$probcluster_)
+}
 ```
